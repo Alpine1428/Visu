@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Grant execute permission
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Copy JAR to root
+      run: |
+        mkdir -p release
+        cp build/libs/*[!-sources].jar ./AlpineVisuals-1.0.0.jar 2>/dev/null || true
+        ls -la *.jar 2>/dev/null || ls -la build/libs/
+
+    - name: Commit JAR to repo
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add -f AlpineVisuals-1.0.0.jar 2>/dev/null || true
+        git diff --staged --quiet || git commit -m "Auto-build: Add compiled JAR"
+        git push || true
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AlpineVisuals-mod
+        path: build/libs/*.jar
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v1.0.0-${{ github.run_number }}
+        name: Alpine Visuals v1.0.0 Build ${{ github.run_number }}
+        body: |
+          ## Alpine Visuals v1.0.0
+          Visual mod for Minecraft 1.20.1 (Fabric)
+          Press RIGHT SHIFT to open menu.
+        files: build/libs/*.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

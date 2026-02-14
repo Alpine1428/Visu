@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "alpinevisuals",
+  "version": "${version}",
+  "name": "Alpine Visuals",
+  "description": "Beautiful visual enhancements for Minecraft. No cheats, just visuals.",
+  "authors": [
+    "Alpine"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Alpine1428/Visu",
+    "sources": "https://github.com/Alpine1428/Visu"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.alpine.visuals.client.AlpineVisualsClient"
+    ]
+  },
+  "mixins": [
+    "alpinevisuals.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
