@@ -22,25 +22,36 @@ jobs:
         distribution: 'temurin'
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+      uses: gradle/actions/setup-gradle@v4
 
     - name: Grant execute permission
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --no-daemon --stacktrace
+
+    - name: List built files
+      run: |
+        echo "=== build/libs ==="
+        ls -la build/libs/ || echo "No build/libs"
 
     - name: Copy JAR to root
       run: |
-        mkdir -p release
-        cp build/libs/*[!-sources].jar ./AlpineVisuals-1.0.0.jar 2>/dev/null || true
-        ls -la *.jar 2>/dev/null || ls -la build/libs/
+        # Find the main jar (not sources, not dev)
+        JAR=$(find build/libs -name "*.jar" ! -name "*-sources.jar" ! -name "*-dev.jar" | head -1)
+        if [ -n "$JAR" ]; then
+          cp "$JAR" ./AlpineVisuals-1.0.0.jar
+          echo "Copied $JAR"
+        else
+          echo "No JAR found!"
+          exit 1
+        fi
 
     - name: Commit JAR to repo
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add -f AlpineVisuals-1.0.0.jar 2>/dev/null || true
+        git add -f AlpineVisuals-1.0.0.jar
         git diff --staged --quiet || git commit -m "Auto-build: Add compiled JAR"
         git push || true
 
@@ -51,14 +62,21 @@ jobs:
         path: build/libs/*.jar
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.0-${{ github.run_number }}
         name: Alpine Visuals v1.0.0 Build ${{ github.run_number }}
         body: |
           ## Alpine Visuals v1.0.0
           Visual mod for Minecraft 1.20.1 (Fabric)
-          Press RIGHT SHIFT to open menu.
-        files: build/libs/*.jar
+          
+          ### Install:
+          1. Install Fabric Loader for 1.20.1
+          2. Install Fabric API
+          3. Put JAR in mods folder
+          4. Press **Right Shift** in game
+        files: |
+          build/libs/*.jar
+          AlpineVisuals-1.0.0.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
