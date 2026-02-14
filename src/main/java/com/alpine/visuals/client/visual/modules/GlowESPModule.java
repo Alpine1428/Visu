@@ -19,8 +19,24 @@ public class GlowESPModule extends VisualModule {
         hostiles = addSetting("Hostiles", true);
         animals = addSetting("Animals", false);
     }
-    @Override public void onEnable() { active = true; }
-    @Override public void onDisable() { active = false; }
+
+    @Override
+    public void onEnable() {
+        active = true;
+    }
+
+    @Override
+    public void onDisable() {
+        active = false;
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world != null) {
+            for (Entity entity : client.world.getEntities()) {
+                if (entity != client.player) {
+                    entity.setGlowing(false);
+                }
+            }
+        }
+    }
 
     @Override
     public void onTick(MinecraftClient client) {
@@ -32,17 +48,6 @@ public class GlowESPModule extends VisualModule {
             if (entity instanceof HostileEntity && hostiles.boolValue) shouldGlow = true;
             if (entity instanceof AnimalEntity && animals.boolValue) shouldGlow = true;
             entity.setGlowing(shouldGlow);
-        }
-    }
-
-    @Override
-    public void onDisable() {
-        active = false;
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null) {
-            for (Entity entity : client.world.getEntities()) {
-                if (entity != client.player) entity.setGlowing(false);
-            }
         }
     }
 }
