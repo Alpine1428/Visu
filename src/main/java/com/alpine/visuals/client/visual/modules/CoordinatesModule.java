@@ -4,14 +4,14 @@ import com.alpine.visuals.client.visual.VisualModule;
 
 public class CoordinatesModule extends VisualModule {
     public static boolean active = false;
+    public final Setting showNether;
+    public final Setting showChunk;
 
     public CoordinatesModule() {
-        super("Coordinates", "Always show coordinates on screen", Category.HUD);
+        super("Coordinates", "XYZ + nether coords + chunk position", Category.HUD);
+        showNether = addSetting("Nether Coords", true);
+        showChunk = addSetting("Chunk Coords", true);
     }
-
-    @Override
-    public void onEnable() { active = true; }
-
-    @Override
-    public void onDisable() { active = false; }
+    @Override public void onEnable() { active = true; }
+    @Override public void onDisable() { active = false; }
 }

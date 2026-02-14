@@ -12,8 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class InGameHudMixin {
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void onRenderCrosshair(DrawContext context, CallbackInfo ci) {
-        if (CustomCrosshairModule.active) {
-            ci.cancel();
-        }
+        if (CustomCrosshairModule.active) ci.cancel();
     }
 }

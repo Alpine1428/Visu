@@ -2,9 +2,9 @@ package com.alpine.visuals.client.visual.modules;
 
 import com.alpine.visuals.client.visual.VisualModule;
 
-public class PotionTimerModule extends VisualModule {
+public class CapeModule extends VisualModule {
     public static boolean active = false;
-    public PotionTimerModule() { super("Potion Timer", "Show remaining potion effect durations", Category.HUD); }
+    public CapeModule() { super("Cape Anim", "Custom cape animation effects", Category.PLAYER); }
     @Override public void onEnable() { active = true; }
     @Override public void onDisable() { active = false; }
 }

@@ -3,51 +3,56 @@ package com.alpine.visuals.client.util;
 import com.alpine.visuals.client.AlpineVisualsClient;
 import com.alpine.visuals.client.visual.VisualManager;
 import com.alpine.visuals.client.visual.VisualModule;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
 import java.io.*;
 import java.nio.file.Path;
 
 public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final Path configPath;
+    private final Path path;
 
     public ConfigManager() {
-        configPath = FabricLoader.getInstance().getConfigDir().resolve("alpine_visuals.json");
+        path = FabricLoader.getInstance().getConfigDir().resolve("alpine_visuals.json");
     }
 
-    public void save(VisualManager manager) {
+    public void save(VisualManager vm) {
         try {
-            JsonObject json = new JsonObject();
-            JsonObject modules = new JsonObject();
-            for (VisualModule m : manager.getModules()) {
-                modules.addProperty(m.getName(), m.isEnabled());
+            JsonObject root = new JsonObject();
+            JsonObject mods = new JsonObject();
+            for (VisualModule m : vm.getModules()) {
+                JsonObject mod = new JsonObject();
+                mod.addProperty("enabled", m.isEnabled());
+                for (VisualModule.Setting s : m.getSettings()) {
+                    if (s.isToggle) mod.addProperty("s_" + s.name, s.boolValue);
+                    else mod.addProperty("s_" + s.name, s.value);
+                }
+                mods.add(m.getName(), mod);
             }
-            json.add("modules", modules);
-            try (Writer w = new FileWriter(configPath.toFile())) {
-                GSON.toJson(json, w);
-            }
-        } catch (IOException e) {
-            AlpineVisualsClient.LOGGER.error("Failed to save config", e);
-        }
+            root.add("modules", mods);
+            try (Writer w = new FileWriter(path.toFile())) { GSON.toJson(root, w); }
+        } catch (Exception e) { AlpineVisualsClient.LOGGER.error("Config save failed", e); }
     }
 
-    public void loadModules(VisualManager manager) {
-        File file = configPath.toFile();
-        if (!file.exists()) return;
-        try (Reader r = new FileReader(file)) {
-            JsonObject json = GSON.fromJson(r, JsonObject.class);
-            if (json == null || !json.has("modules")) return;
-            JsonObject modules = json.getAsJsonObject("modules");
-            for (VisualModule m : manager.getModules()) {
-                if (modules.has(m.getName())) {
-                    m.setEnabled(modules.get(m.getName()).getAsBoolean());
+    public void loadModules(VisualManager vm) {
+        File f = path.toFile();
+        if (!f.exists()) return;
+        try (Reader r = new FileReader(f)) {
+            JsonObject root = GSON.fromJson(r, JsonObject.class);
+            if (root == null || !root.has("modules")) return;
+            JsonObject mods = root.getAsJsonObject("modules");
+            for (VisualModule m : vm.getModules()) {
+                if (!mods.has(m.getName())) continue;
+                JsonObject mod = mods.getAsJsonObject(m.getName());
+                if (mod.has("enabled")) m.setEnabled(mod.get("enabled").getAsBoolean());
+                for (VisualModule.Setting s : m.getSettings()) {
+                    String key = "s_" + s.name;
+                    if (mod.has(key)) {
+                        if (s.isToggle) s.boolValue = mod.get(key).getAsBoolean();
+                        else s.value = mod.get(key).getAsFloat();
+                    }
                 }
             }
-        } catch (Exception e) {
-            AlpineVisualsClient.LOGGER.error("Failed to load config", e);
-        }
+        } catch (Exception e) { AlpineVisualsClient.LOGGER.error("Config load failed", e); }
     }
 }

@@ -14,55 +14,34 @@ import org.slf4j.LoggerFactory;
 public class AlpineVisualsClient implements ClientModInitializer {
     public static final String MOD_ID = "alpinevisuals";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
     private static AlpineVisualsClient instance;
     private VisualManager visualManager;
     private HudRenderer hudRenderer;
     private ConfigManager configManager;
-    private boolean wasRShiftPressed = false;
+    private boolean wasKeyPressed = false;
 
     @Override
     public void onInitializeClient() {
         instance = this;
-        LOGGER.info("[Alpine Visuals] Initializing...");
-
+        LOGGER.info("[Alpine Visuals] v2.0 Loading...");
         configManager = new ConfigManager();
         visualManager = new VisualManager();
         hudRenderer = new HudRenderer(visualManager);
-
         configManager.loadModules(visualManager);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
-
-            boolean rShiftPressed = GLFW.glfwGetKey(
-                client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT
-            ) == GLFW.GLFW_PRESS;
-
-            if (rShiftPressed && !wasRShiftPressed) {
-                client.setScreen(new VisualMenuScreen());
-            }
-            wasRShiftPressed = rShiftPressed;
-
+            boolean pressed = GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
+            if (pressed && !wasKeyPressed) client.setScreen(new VisualMenuScreen());
+            wasKeyPressed = pressed;
             visualManager.tick(client);
         });
 
-        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-            hudRenderer.render(drawContext, tickDelta);
-        });
-
-        LOGGER.info("[Alpine Visuals] Loaded! Press RIGHT SHIFT to open menu.");
+        HudRenderCallback.EVENT.register((ctx, td) -> hudRenderer.render(ctx, td));
+        LOGGER.info("[Alpine Visuals] v2.0 Loaded! RIGHT SHIFT to open.");
     }
 
-    public static AlpineVisualsClient getInstance() {
-        return instance;
-    }
-
-    public VisualManager getVisualManager() {
-        return visualManager;
-    }
-
-    public ConfigManager getConfigManager() {
-        return configManager;
-    }
+    public static AlpineVisualsClient getInstance() { return instance; }
+    public VisualManager getVisualManager() { return visualManager; }
+    public ConfigManager getConfigManager() { return configManager; }
 }

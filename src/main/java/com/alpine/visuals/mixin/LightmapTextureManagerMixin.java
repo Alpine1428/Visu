@@ -11,9 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LightmapTextureManager.class)
 public class LightmapTextureManagerMixin {
     @Inject(method = "getBrightness", at = @At("RETURN"), cancellable = true)
-    private static void onGetBrightness(DimensionType type, int lightLevel, CallbackInfoReturnable<Float> cir) {
-        if (FullbrightModule.active) {
-            cir.setReturnValue(1.0f);
-        }
+    private static void onGetBrightness(DimensionType type, int level, CallbackInfoReturnable<Float> cir) {
+        if (FullbrightModule.active) cir.setReturnValue(1.0f);
     }
 }

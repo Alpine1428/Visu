@@ -12,9 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BackgroundRenderer.class)
 public class BackgroundRendererMixin {
     @Inject(method = "applyFog", at = @At("TAIL"))
-    private static void onApplyFog(Camera camera, BackgroundRenderer.FogType fogType,
-                                   float viewDistance, boolean thickFog, float tickDelta,
-                                   CallbackInfo ci) {
+    private static void onApplyFog(Camera cam, BackgroundRenderer.FogType ft,
+                                   float vd, boolean thick, float td, CallbackInfo ci) {
         if (NoFogModule.active) {
             RenderSystem.setShaderFogStart(Float.MAX_VALUE);
             RenderSystem.setShaderFogEnd(Float.MAX_VALUE);

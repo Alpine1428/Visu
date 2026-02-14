@@ -1,21 +1,33 @@
-# Alpine Visuals
+# Alpine Visuals v2.0
 
-Beautiful visual enhancement mod for Minecraft 1.20.1 (Fabric).
-No cheats - just visuals.
+Ultimate visual enhancement mod for Minecraft 1.20.1 (Fabric)
+Inspired by Pulse Visual, Luminar Visuals, Soup API
 
-## Features
-- Fullbright, Custom Crosshair, No Fog, Block Highlight
-- HUD Info (FPS/Ping/Biome), Armor HUD, Coordinates, Compass, Potion Timer
-- Particle Trail, Time Changer, Chunk Borders
-- Zoom (hold C), Smooth Animations
+## 37 Modules
+
+### Render (10)
+Fullbright | Custom Crosshair | No Fog | Block Highlight | Item Physics
+Glow ESP | Name Tags | Trail Renderer | View Bobbing+ | Swing Anim
+
+### HUD (10)
+HUD Info | Armor HUD | Coordinates | Compass | Potion Timer
+Keystrokes | Speed Display | Clock | CPS Counter | Target HUD
+
+### World (7)
+Chunk Borders | Time Changer | Particle Trail | Beacon Beam+
+Custom Sky | Ambient Particles | Waypoints
+
+### Player (6)
+Zoom | Freelook | No Bob | No Hurt Cam | Spin Visual | Cape Anim
+
+### Misc (4)
+Animations | Screen FX | TNT Timer | Item Model
 
 ## Controls
-- **Right Shift** - Open/Close menu
-- **C** (hold) - Zoom (when enabled)
+- **Right Shift** - Menu
+- **C** (hold) - Zoom
 
 ## Install
-1. Install Fabric Loader for 1.20.1
-2. Install Fabric API
-3. Download JAR from Releases
-4. Put in mods folder
-5. Press RIGHT SHIFT in game!
+1. Fabric Loader + Fabric API for 1.20.1
+2. Put JAR in mods folder
+3. Right Shift to open menu

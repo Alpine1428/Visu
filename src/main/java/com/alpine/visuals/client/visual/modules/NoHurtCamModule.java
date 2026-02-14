@@ -2,9 +2,9 @@ package com.alpine.visuals.client.visual.modules;
 
 import com.alpine.visuals.client.visual.VisualModule;
 
-public class PotionTimerModule extends VisualModule {
+public class NoHurtCamModule extends VisualModule {
     public static boolean active = false;
-    public PotionTimerModule() { super("Potion Timer", "Show remaining potion effect durations", Category.HUD); }
+    public NoHurtCamModule() { super("No Hurt Cam", "Remove screen shake when taking damage", Category.PLAYER); }
     @Override public void onEnable() { active = true; }
     @Override public void onDisable() { active = false; }
 }

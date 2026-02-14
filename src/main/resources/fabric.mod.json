@@ -3,12 +3,11 @@
   "id": "alpinevisuals",
   "version": "${version}",
   "name": "Alpine Visuals",
-  "description": "Beautiful visual enhancements for Minecraft. No cheats, just visuals.",
+  "description": "Ultimate visual enhancements. Inspired by Pulse, Luminar, Soup API.",
   "authors": [
     "Alpine"
   ],
   "contact": {
-    "homepage": "https://github.com/Alpine1428/Visu",
     "sources": "https://github.com/Alpine1428/Visu"
   },
   "license": "MIT",
